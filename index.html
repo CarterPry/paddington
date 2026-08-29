@@ -648,9 +648,9 @@ function drawWhiteCat(c, T, mx, my){
 
 /* ---- Paddington-style bear, drawn facing +x, ground at y=0 ---- */
 function drawBear(c, o){
-  const FUR='#6f4a2c', FURD='#573a20', MUZ='#c9a87e',
-        COAT='#31608e', COATD='#26506f', HAT='#c8332b', HATD='#a3251f',
-        CASE='#8a5c33', CASED='#6d4525';
+  const FUR='#6d4e33', FURD='#54391f', MUZ='#c2a37c',
+        COAT='#3d6284', COATD='#2c4f66', HAT='#bd3a2a', HATD='#992a1e',
+        CASE='#84573a', CASED='#68472e';
   const sit = ss(o.sit);
   const legAmp = o.state==='leap' ? 0 : 20*o.gaitAmp;
   const lr = off => Math.sin(o.phase+off)*legAmp;
@@ -706,11 +706,11 @@ function drawBear(c, o){
     c.closePath();
   };
   c.save(); c.translate(1.6,2);
-  c.fillStyle='#234669'; coatPath(); c.fill();
+  c.fillStyle='#2a4a60'; coatPath(); c.fill();
   c.restore();
   c.fillStyle=COAT; coatPath(); c.fill();
   c.save(); coatPath(); c.clip();
-  tooth(c, 331, -44,-140,50,-46, 130, '#5b87b5', '#1e405f');
+  tooth(c, 331, -44,-140,50,-46, 130, '#5a80a0', '#24404f');
   c.restore();
   // hood bump
   c.fillStyle=COAT;
