@@ -1,0 +1,96 @@
+{
+  "project": "Wash Day — interactive folk painting",
+  "pipeline": "layer-based: image model paints the layers, code animates them",
+  "world": { "width": 1600, "height": 1000, "note": "all placements below are in world units; export images at 2x for crispness" },
+
+  "style_lock": {
+    "description": "The style anchor image is the mandatory source of truth for every layer. Preserve: gouache/tempera texture with visible stippled brushwork, naive folk-art proportions, matte colors, soft grain, no outlines, no gradients-as-gradients (only brushwork), consistent light from upper-left.",
+    "palette": {
+      "sky": "#a5c6e3 muted powder blue",
+      "hills": "#7d9a55 mid olive-green",
+      "foliage_dark": "#22452c", "foliage_light": "#9dbb7f",
+      "olive_leaves": "silvery green up to #d5dcb2",
+      "meadow": "#bfca77 pale yellow-green",
+      "roof": "#cf2f1c brick red", "walls": "#f3efe3 warm white",
+      "dress": "#2b3f2e near-black green with tiny white dots",
+      "accents": "#d13c27 red shoes/hands, #c05a41 ruddy skin"
+    }
+  },
+
+  "layers": [
+    {
+      "file": "style_anchor.png",
+      "size_px": [1600, 1000],
+      "purpose": "Generated FIRST. Full scene reference used as the style lock for every subsequent layer. Never shipped — reference only."
+    },
+    {
+      "file": "background.png",
+      "size_px": [3200, 2000],
+      "world_rect": [0, 0, 1600, 1000],
+      "content": "Complete scene WITHOUT: the old woman, the white shirt being pinned, both cats. INCLUDES: sky, rolling hills, white house with red roof and green windows, cypress cluster right, sea of round stippled bushes, foreground pale-green meadow with fine grass texture, large gnarled olive tree filling upper-left, thin clothesline from the tree across to the right edge, one pale blue-grey sheet already hanging on the line left of center."
+    },
+    {
+      "file": "woman.png",
+      "size_px": [460, 790],
+      "world_rect": [455, 535, 230, 395],
+      "pivot_world": [540, 915],
+      "content": "Old woman standing profile facing right. White headscarf, ruddy face, dark green dress with tiny white polka dots, red shoes. Her back arm reaches up and forward to the clothesline. NO front arm (painted separately). Transparent background.",
+      "animation": "whole-body sway ±0.5° around feet pivot"
+    },
+    {
+      "file": "woman_arm.png",
+      "size_px": [280, 120],
+      "world_rect": [548, 610, 140, 60],
+      "pivot_world": [560, 660],
+      "pivot_frac": [0.09, 0.83],
+      "content": "The woman's front arm only: dark green sleeve from shoulder to wrist, small ruddy red hand, roughly horizontal reaching slightly upward to the right. Transparent background.",
+      "animation": "rotates ±6° at the shoulder pivot — the pinning gesture"
+    },
+    {
+      "file": "shirt.png",
+      "size_px": [400, 340],
+      "world_rect": [616, 598, 200, 170],
+      "pivot_world": [716, 606],
+      "pivot_frac": [0.5, 0.05],
+      "content": "White long-sleeve shirt hanging from two small wooden clothespins at the top edge, sleeves slightly spread, soft fold shadows. Transparent background.",
+      "animation": "sways ±3° at the pin pivot, gusts when the cursor sweeps past"
+    },
+    {
+      "file": "white_cat.png",
+      "size_px": [180, 168],
+      "world_rect": [1037, 876, 90, 84],
+      "content": "Small white cat sitting, facing left, pink inner ears, calm. Transparent background.",
+      "animation": "breathing squash, head turn toward cursor (applied to whole sprite)"
+    },
+    {
+      "file": "cat_body.png",
+      "size_px": [520, 260],
+      "world_local_rect": [-118, -118, 236, 100],
+      "content": "Black cat TORSO ONLY, side view facing right: chest, long back, rounded haunch. NO head, NO tail, NO legs — cleanly cropped where those attach. Near-black (#131311) with faint darker brush speckle. Transparent background.",
+      "animation": "root of the skeleton: bob, stretch, sit rotation"
+    },
+    {
+      "file": "cat_head.png",
+      "size_px": [260, 220],
+      "world_local_rect": [80, -168, 130, 110],
+      "pivot_local": [104, -96],
+      "content": "Black cat HEAD ONLY facing right: rounded skull, two pointed ears, slight muzzle, yellow-green almond eyes with vertical pupils, tiny rust nose, three fine white whiskers each side. Neck edge cleanly cropped. Transparent background.",
+      "animation": "rotates at neck pivot to track the cursor; blinks handled in code by overpainting"
+    },
+    {
+      "file": "cat_leg.png",
+      "size_px": [80, 130],
+      "world_local_rect": [-10, 0, 20, 52],
+      "pivot_frac": [0.5, 0.04],
+      "content": "ONE black cat leg, vertical, hip to paw, slightly tapered with a small rounded paw. Transparent background. (Reused for all four legs; far legs are darkened in code.)",
+      "animation": "rotates at hip; walk cycle driven by speed"
+    }
+  ],
+
+  "code_handles": [
+    "tail — procedural bezier stroke in #131311 (needs continuous bending, images can't)",
+    "black cat physics — spring-follow, personal-space radius, gait, leap, sit, blink",
+    "shadows, birds, breeze, grain overlay",
+    "fallback — any missing layer file falls back to the procedural painting"
+  ]
+}
