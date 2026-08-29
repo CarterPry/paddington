@@ -373,7 +373,7 @@ function paint(){
 
 /* the olive trunk — painted in the background AND redrawn over the bear
    when he wanders behind the tree */
-const TREE_DX = 120, TREE_DY = -110, TREE_S = .90;
+const TREE_DX = 120, TREE_DY = -145, TREE_S = .86;
 /* shared tree placement: shifted onto the hill, raised & slightly smaller
    so it sits back from the bottom border */
 function treeXform(c){
@@ -423,7 +423,7 @@ function buildTreeLayer(){
     [150,300,168,138],[330,196,196,158],[540,208,188,152],[676,330,140,116],
     [92,452,128,104],[266,398,172,138],[478,378,164,132],[624,462,116,96],
     [396,104,150,118],[210,124,124,100],[566,104,126,102],[38,330,110,92],
-    [710,200,110,92],[300,486,130,96],
+    [710,200,110,92],[300,486,130,96],[168,516,118,88],
   ];
   for (const [x,y,rx,ry] of canopy)
     foliage(t, x, y, rx, ry, OLIVE_BASE, OLIVE_TONES, 1.15, 10);
@@ -947,7 +947,7 @@ function frame(now){
 
   // depth sort: further up the hill (smaller y) means behind
   const behindFigures = C.y < 908;
-  const behindTree = C.y < 822 && Math.abs(C.x - (320+TREE_DX)) < 195;
+  const behindTree = C.y < 788 && Math.abs(C.x - (320+TREE_DX)) < 190;
   if (behindFigures || behindTree) paintBearNow();
   if (behindTree) drawTreeLayer(c);       // the whole tree occludes him
   drawWoman(c, T, T*.9);
