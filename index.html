@@ -9,7 +9,8 @@
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%;overflow:hidden;background:#1d2418;font-family:'Cormorant Garamond',serif}
-  canvas{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+  canvas{position:fixed;inset:0;width:100vw;height:100vh;display:block;
+    filter:url(#wobble)}
   #grain{
     position:fixed;inset:0;pointer-events:none;z-index:5;
     opacity:.26;mix-blend-mode:overlay;
@@ -32,6 +33,12 @@
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-4%" y="-4%" width="108%" height="108%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="8" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
 <canvas id="bg"></canvas>
 <canvas id="fg"></canvas>
 <div id="grain"></div>
@@ -313,10 +320,20 @@ function paint(){
     }
   }
 
-  /* --- clothesline + hanging sheet (behind the woman & meadow) --- */
-  c.strokeStyle='#443d2c'; c.lineWidth=2.6; c.globalAlpha=.9;
-  c.beginPath(); c.moveTo(398,598); c.quadraticCurveTo(1000,624,1650,566); c.stroke();
-  c.globalAlpha=1;
+  /* --- clothesline: hand-drawn, wavering weight (behind woman & meadow) --- */
+  { c.globalAlpha=.9; c.strokeStyle='#443d2c'; c.lineCap='round';
+    const q = t => ({x: lerp(lerp(398,1000,t), lerp(1000,1650,t), t),
+                     y: lerp(lerp(598,624,t), lerp(624,566,t), t)});
+    let prev=q(0);
+    for (let i=1;i<=46;i++){
+      const t=i/46, p=q(t);
+      const jy=Math.sin(i*2.7)*1.1+S(-.7,.7);
+      c.lineWidth=1.9+S(0,1.2);
+      c.beginPath(); c.moveTo(prev.x,prev.y); c.lineTo(p.x,p.y+jy); c.stroke();
+      prev={x:p.x, y:p.y+jy};
+    }
+    c.globalAlpha=1;
+  }
   // sheet — hangs mostly behind the grandma, peeking out at her sides
   c.save(); c.translate(115,0);
   c.fillStyle='#ccd7dc';
@@ -489,11 +506,15 @@ function drawWoman(c, T, pinPhase){
   // dot pattern + paper tooth
   c.save(); dressPath(); c.clip();
   c.fillStyle='rgba(233,236,223,.8)';
-  for (let y=648;y<905;y+=15)
-    for (let x=482;x<632;x+=15){
-      const jx = ((y/15)|0)%2 ? 7 : 0;
-      c.beginPath(); c.arc(x+jx,y,1.8,0,TAU); c.fill();
-    }
+  { const r=mkRnd(97);   // hand-placed dots: jittered position + size
+    for (let y=648;y<905;y+=15)
+      for (let x=482;x<632;x+=15){
+        const jx = ((y/15)|0)%2 ? 7 : 0;
+        c.beginPath();
+        c.arc(x+jx+(r()-.5)*3.2, y+(r()-.5)*3.2, 1.4+r()*.9, 0, TAU);
+        c.fill();
+      }
+  }
   tooth(c, 311, 480,638,632,905, 240, '#4a6350', '#16241a');
   c.restore();
 
